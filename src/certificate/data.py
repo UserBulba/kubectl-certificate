@@ -1,17 +1,15 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from dataclasses import field
 from datetime import datetime
-from typing import List
-
-from typing_extensions import Optional
 
 
 @dataclass
 class Certificate:
-    domains: List[str]
+    domains: list[str]
     expiration_date: datetime
-    crt: Optional[str] = field(default=None)
-    key: Optional[str] = field(default=None)
+    crt: str | None = field(default=None)
+    key: str | None = field(default=None)
 
     def __repr__(self):
         return f"Certificate(domains={self.domains}, expiration_date={self.expiration_date})"  # noqa
@@ -26,8 +24,8 @@ class Secrets:
 
 @dataclass
 class Parameters:
-    cert_path: str = None
-    key_path: Optional[str] = None
-    cert: Certificate = None
+    cert_path: str | None = None
+    key_path: str | None = None
+    cert: Certificate | None = None
     debug: bool = False
     verbose: bool = False

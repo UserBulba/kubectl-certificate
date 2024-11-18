@@ -1,6 +1,9 @@
+from __future__ import annotations
+
+# from dataclasses import dataclass
 import base64
 
-import kubernetes.client
+import kubernetes
 import urllib3
 from certificate.certs import CertificateInfo
 from certificate.data import Parameters
@@ -17,13 +20,16 @@ config.load_kube_config()
 
 
 class KubernetesSecrets:
+    kubernetes_certificates: list[Secrets]
+    api_client: kubernetes.client.ApiClient
+    v1: kubernetes.client.CoreV1Api
     """
     Class to manage Kubernetes secrets.
     """
 
     def __init__(self, parameters: Parameters) -> None:
         self.parameters = parameters
-        self.kubernetes_certificates: list[Secrets] = []
+        self.kubernetes_certificates = []
 
         self.api_client = kubernetes.client.ApiClient()
         self.v1 = kubernetes.client.CoreV1Api(self.api_client)
@@ -33,7 +39,7 @@ class KubernetesSecrets:
             self.api_client.close()
 
     @retry((ApiException, urllib3.exceptions.MaxRetryError), tries=3, delay=2)
-    def find_secrets(self) -> list[Secrets]:
+    def find_secrets(self) -> Secrets:
         """
         List all the Kubernetes secrets.
         """
@@ -118,3 +124,4 @@ class KubernetesSecrets:
 
         finally:
             self.close()
+
